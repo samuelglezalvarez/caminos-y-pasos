@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caminos y pasos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d5a27 0%, #4a7c4a 30%, #6ba368 60%, #8bc88b 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fondo decorativo del bosque */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(72, 124, 74, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(107, 163, 104, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(139, 200, 139, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .forest-path {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #4a7c4a, #6ba368);
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .forest-path::before {
+            content: '🌲🌳🌲🍃🌲🌳🍃🌲🌳🌲';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            font-size: 24px;
+            text-align: center;
+            animation: sway 3s ease-in-out infinite;
+        }
+
+        .forest-path::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 40px;
+            background: linear-gradient(to right, transparent, rgba(139, 200, 139, 0.8), transparent);
+            border-radius: 20px 20px 0 0;
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(5px); }
+        }
+
+        h1 {
+            color: #2d5a27;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #4a7c4a;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .description {
+            color: #2d5a27;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .game-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #6ba368, #8bc88b);
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(107, 163, 104, 0.3);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(107, 163, 104, 0.4);
+        }
+
+        .category-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .category-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .question-display {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #6ba368;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #2d5a27;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6ba368, #8bc88b);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 163, 104, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 163, 104, 0.4);
+        }
+
+        .instructions {
+            background: rgba(139, 200, 139, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px dashed #6ba368;
+        }
+
+        .instructions h3 {
+            color: #2d5a27;
+            margin-bottom: 15px;
+        }
+
+        .instructions ul {
+            color: #4a7c4a;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-text {
+                font-size: 1.2em;
+            }
+            
+            .btn {
+                padding: 12px 24px;
+                font-size: 1em;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌟 Caminos y pasos 🌟</h1>
+            <div class="forest-path"></div>
+            <p class="subtitle">Un juego para conocernos en nuestra nueva aventura</p>
+            <p class="description">
+                Bienvenidos a vuestro nuevo instituto. Este es un momento especial: dejáis atrás la primaria y comenzáis una nueva etapa. 
+                A través de este juego, nos conoceremos mejor, compartiremos nuestras ideas, y construiremos juntos el camino hacia el futuro.
+            </p>
+        </div>
+
+        <div class="game-section">
+            <div class="instructions">
+                <h3>🎮 ¿Cómo jugamos?</h3>
+                <ul>
+                    <li>Sentaos en círculo para que todos puedan verse</li>
+                    <li>Elegid una categoría de preguntas que os llame la atención</li>
+                    <li>Leed la pregunta en voz alta para que todos la escuchen</li>
+                    <li>El que quiera puede responder voluntariamente - ¡nadie está obligado!</li>
+                    <li>Escuchad con respeto y sin juzgar las respuestas de vuestros compañeros</li>
+                    <li>Cuando terminéis de hablar, pasad a la siguiente pregunta</li>
+                </ul>
+            </div>
+
+            <div id="category-selection">
+                <h2 style="text-align: center; color: #2d5a27; margin-bottom: 20px;">Elige una categoría:</h2>
+                <div class="categories">
+                    <div class="category-card" onclick="selectCategory('nuevos-comienzos')">
+                        <h3>🌱 Nuevos Comienzos</h3>
+                        <p>Expectativas y emociones sobre esta nueva etapa</p>
+                    </div>
+                    <div class="category-card" onclick="selectCategory('suenos-metas')">
+                        <h3>⭐ Sueños y Metas</h3>
+                        <p>Aspiraciones y objetivos para el futuro</p>
+                    </div>
+                    <div class="category-card" onclick="selectCategory('miedos-preocupaciones')">
+                        <h3>🤗 Miedos y Preocupaciones</h3>
+                        <p>Compartir inquietudes de forma segura</p>
+                    </div>
+                    <div class="category-card" onclick="selectCategory('amistad-companerismo')">
+                        <h3>👥 Amistad y Compañerismo</h3>
+                        <p>Construyendo vínculos y conociéndonos</p>
+                    </div>
+                    <div class="category-card" onclick="selectCategory('reflexion-personal')">
+                        <h3>🔍 Reflexión Personal</h3>
+                        <p>Conocernos mejor a nosotros mismos</p>
+                    </div>
+                    <div class="category-card" onclick="selectCategory('creatividad-imaginacion')">
+                        <h3>🎨 Creatividad e Imaginación</h3>
+                        <p>Preguntas divertidas y creativas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="question-section" class="hidden">
+                <div class="question-display">
+                    <p class="question-text" id="current-question">Selecciona una categoría para comenzar</p>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="newQuestion()">📝 Nueva Pregunta</button>
+                    <button class="btn" onclick="backToCategories()">🔄 Cambiar Categoría</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+            'nuevos-comienzos': [
+                "¿Qué es lo que más te emociona de empezar en el instituto?",
+                "¿Cuál crees que será la mayor diferencia entre primaria y secundaria?",
+                "¿Qué esperas aprender este año que no sabías antes?",
+                "Si pudieras darle un consejo a tu yo del año pasado, ¿cuál sería?",
+                "¿Cómo te imaginas que serás al final de 1º de ESO?",
+                "¿Qué tradición o recuerdo de primaria te gustaría mantener?",
+                "¿Cuál es tu mayor expectativa sobre los nuevos profesores?",
+                "¿Qué cambio positivo esperas hacer en ti mismo este curso?",
+                "¿Cómo te sientes siendo ahora de los 'pequeños' del instituto?",
+                "¿Qué nueva actividad o asignatura te hace más ilusión?"
+            ],
+            'suenos-metas': [
+                "¿Cuál es tu sueño más grande para cuando seas mayor?",
+                "¿Qué profesión te gustaría tener y por qué?",
+                "¿Qué te gustaría haber conseguido antes de cumplir 18 años?",
+                "Si pudieras ser famoso por algo, ¿por qué te gustaría serlo?",
+                "¿Qué país o lugar del mundo te gustaría visitar algún día?",
+                "¿Qué habilidad nueva te gustaría aprender este año?",
+                "¿Cuál es tu meta académica para este curso?",
+                "¿Qué cambio positivo te gustaría ver en el mundo?",
+                "¿Qué legado te gustaría dejar cuando seas mayor?",
+                "¿Cuál es tu objetivo personal más importante ahora mismo?"
+            ],
+            'miedos-preocupaciones': [
+                "¿Cuál es tu mayor preocupación sobre el instituto? (Es normal tenerlas)",
+                "¿Qué situación nueva te da un poquito de miedo?",
+                "¿Con qué tipo de personas te cuesta más relacionarte?",
+                "¿Qué harías si te sintieras perdido en el instituto?",
+                "¿Cuál es tu mayor miedo sobre hacer nuevos amigos?",
+                "¿Qué asignatura te preocupa más y por qué?",
+                "¿Cómo te sientes cuando tienes que hablar en público?",
+                "¿Qué harías si tuvieras un problema con un compañero?",
+                "¿Cuál es tu estrategia cuando te sientes nervioso?",
+                "¿A quién acudirías si necesitaras ayuda en el instituto?"
+            ],
+            'amistad-companerismo': [
+                "¿Qué cualidad valoras más en un amigo?",
+                "¿Cuál es tu forma favorita de conocer gente nueva?",
+                "¿Qué actividad te gustaría hacer con tus nuevos compañeros?",
+                "¿Cómo demuestras que te importa un amigo?",
+                "¿Qué harías para incluir a alguien que se siente solo?",
+                "¿Cuál es el mejor consejo que te ha dado un amigo?",
+                "¿Qué significa para ti ser un buen compañero de clase?",
+                "¿Cómo resolverías un malentendido con un amigo?",
+                "¿Qué tipo de planes te gusta hacer con tus amigos?",
+                "¿Cuál es tu recuerdo favorito con amigos de primaria?"
+            ],
+            'reflexion-personal': [
+                "¿Cuál es tu mayor fortaleza como persona?",
+                "¿En qué te gustaría mejorar este año?",
+                "¿Qué te hace sentir realmente orgulloso de ti mismo?",
+                "¿Cuál es tu forma de relajarte cuando estás estresado?",
+                "¿Qué actividad te hace sentir más como 'tú mismo'?",
+                "¿Cuál es la lección más importante que has aprendido hasta ahora?",
+                "¿Qué te motiva cuando las cosas se ponen difíciles?",
+                "¿Cómo has cambiado en los últimos dos años?",
+                "¿Qué valor o principio es más importante para ti?",
+                "¿Cuándo te sientes más confiado en ti mismo?"
+            ],
+            'creatividad-imaginacion': [
+                "Si pudieras tener un superpoder, ¿cuál elegirías y por qué?",
+                "¿Cómo sería tu día perfecto en el instituto?",
+                "Si fueras el director del instituto por un día, ¿qué cambiarías?",
+                "¿Qué asignatura inventarías si pudieras?",
+                "Si pudieras viajar en el tiempo, ¿a qué época irías?",
+                "¿Cuál sería tu mascota ideal para el instituto?",
+                "Si escribieras un libro sobre tu vida, ¿cómo se llamaría?",
+                "¿Qué personaje de ficción te gustaría tener como compañero de clase?",
+                "Si pudieras crear una nueva tradición para el instituto, ¿cuál sería?",
+                "¿Cómo te imaginas que será la educación dentro de 20 años?"
+            ]
+        };
+
+        let currentCategory = '';
+        let usedQuestions = [];
+
+        function selectCategory(category) {
+            currentCategory = category;
+            usedQuestions = [];
+            document.getElementById('category-selection').classList.add('hidden');
+            document.getElementById('question-section').classList.remove('hidden');
+            newQuestion();
+        }
+
+        function newQuestion() {
+            if (!currentCategory) return;
+            
+            const categoryQuestions = questions[currentCategory];
+            let availableQuestions = categoryQuestions.filter(q => !usedQuestions.includes(q));
+            
+            if (availableQuestions.length === 0) {
+                usedQuestions = [];
+                availableQuestions = categoryQuestions;
+            }
+            
+            const randomQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(randomQuestion);
+            
+            document.getElementById('current-question').textContent = randomQuestion;
+        }
+
+        function backToCategories() {
+            document.getElementById('category-selection').classList.remove('hidden');
+            document.getElementById('question-section').classList.add('hidden');
+            currentCategory = '';
+            usedQuestions = [];
+        }
+    </script>
+</body>
+</html>
